@@ -18,6 +18,12 @@
   notify:
     - restart docker
 
+- name: Ensure Docker CE configuration folder exists
+  file:
+    path: /etc/docker
+    mode: 0700
+    state: directory
+
 - name: Configure Docker CE
   copy:
     content: "{{ docker_ce_config | to_nice_json }}"

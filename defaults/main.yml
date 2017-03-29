@@ -2,5 +2,5 @@
 # defaults file for lae.docker-ce
 docker_ce_config:
   live-restore: true
-docker_ce_rpm_key_path: "/etc/rpm/docker_ce_packaging_key.asc"
+  log-level: "info"
 docker_ce_restart_on_upgrade: yes
