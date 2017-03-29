@@ -1,0 +1,33 @@
+---
+# tasks file for lae.docker-ce
+- include: load_variables.yml
+- include: environment_check.yml
+
+- name: Install prerequisite packages
+  package:
+    name: "{{ item }}"
+    state: present
+  with_items: "{{ docker_ce_prerequisite_packages }}"
+
+- include: "install_{{ ansible_pkg_mgr }}_repo.yml"
+
+- name: Install Docker CE
+  package:
+    name: docker-ce
+    state: latest
+  notify:
+    - restart docker
+
+- name: Configure Docker CE
+  copy:
+    content: "{{ docker_ce_config | to_nice_json }}"
+    dest: /etc/docker/daemon.json
+    backup: yes
+  notify:
+    - restart docker
+
+- name: Start and enable the Docker service
+  service:
+    name: docker
+    state: started
+    enabled: yes

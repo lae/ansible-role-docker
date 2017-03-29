@@ -1,0 +1,9 @@
+---
+docker_ce_deprecated_packages:
+  - docker
+  - docker-common
+  - container-selinux
+  - docker-selinux
+  - docker-engine
+docker_ce_prerequisite_packages:
+  - ca-certificates

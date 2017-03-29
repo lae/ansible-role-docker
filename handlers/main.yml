@@ -1,0 +1,7 @@
+---
+# handlers file for lae.docker-ce
+- name: restart docker
+  service:
+    name: docker
+    state: restarted
+  when: "docker_ce_restart_on_upgrade"
