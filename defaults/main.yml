@@ -1,6 +1,6 @@
 ---
-# defaults file for lae.docker-ce
-docker_ce_config:
+# defaults file for lae.docker
+docker_config:
   live-restore: true
   log-level: "info"
-docker_ce_restart_on_upgrade: yes
+docker_restart_on_upgrade: yes

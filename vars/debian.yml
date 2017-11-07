@@ -1,8 +1,8 @@
 ---
-docker_ce_deprecated_packages:
+docker_deprecated_packages:
   - docker
   - docker-engine
-docker_ce_prerequisite_packages:
+docker_prerequisite_packages:
   - apt-transport-https
   - ca-certificates
   - curl
