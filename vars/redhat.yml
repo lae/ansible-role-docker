@@ -2,7 +2,6 @@
 docker_deprecated_packages:
   - docker
   - docker-common
-  - docker-selinux
   - docker-engine
 docker_prerequisite_packages:
   - ca-certificates
