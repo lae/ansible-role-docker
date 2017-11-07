@@ -3,3 +3,12 @@
   connection: local
   roles:
     - { name: lae.travis-lxc }
+
+- hosts: all
+  tasks:
+    - name: Ensure pip is installed
+      package:
+        name: python-pip
+    - name: Install docker-py library
+      pip:
+        name: docker-py
