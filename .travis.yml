@@ -18,7 +18,7 @@ before_cache:
 install:
 - sudo tar xf $HOME/lxc/cache.tar -C / || true
 - sudo apt-get install -y expect-dev
-- pip install ansible
+- pip install ansible docker-py
 - ansible --version
 - printf '[defaults]\nroles_path=../\ncallback_whitelist=profile_tasks'  >ansible.cfg
 - ansible-galaxy install lae.travis-lxc
@@ -32,6 +32,7 @@ script:
 - 'grep -A1 "PLAY RECAP" /tmp/idempotency.log | grep -qP "changed=0.*failed=0" &&
   (echo "Idempotence: PASS"; exit 0) ||
   (echo "Idempotence: FAIL"; cat /tmp/idempotency.log; exit 1)'
+- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -v tests/test.yml -i tests/inventory
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
   slack:
