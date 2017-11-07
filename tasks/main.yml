@@ -9,6 +9,12 @@
     state: present
   with_items: "{{ docker_prerequisite_packages }}"
 
+- name: Ensure deprecated Docker packages are not installed
+  package:
+    name: "{{ item }}"
+    state: absent
+  with_items: "{{ docker_deprecated_packages }}"
+
 - include: "install_{{ ansible_pkg_mgr }}_repo.yml"
 
 - name: Install Docker CE
