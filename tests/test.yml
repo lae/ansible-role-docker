@@ -22,5 +22,5 @@
         shell: journalctl --no-pager -xu docker.service
         when: "ansible_service_mgr == 'systemd'"
       - name: Other Docker daemon logs
-        shell: "cat /var/log/daemon.log || grep docker /var/log/messages"
+        shell: "cat /var/log/daemon.log || grep docker /var/log/messages || true"
       ignore_errors: yes
