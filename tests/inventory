@@ -1,5 +1,2 @@
+[docker]
 test01.lxc
-
-[all:vars]
-# user defined here so we can use it for ad-hoc tests
-ansible_ssh_user=root
