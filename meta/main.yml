@@ -11,8 +11,7 @@ galaxy_info:
   - name: Debian
     versions:
     - jessie
-  #  - stretch
-  #  - wheezy
+    - stretch
   - name: EL
     versions:
     - 7
