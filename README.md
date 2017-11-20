@@ -36,6 +36,8 @@ will turn into the following `/etc/docker/daemon.json`:
 `docker_restart_on_upgrade` will restart the docker service if this role
 upgrades the `docker-ce` package.
 
+To install `docker-compose`, set `docker_compose_install` to `True` or `yes`.
+
 
 Example Playbook
 ----------------
@@ -47,4 +49,5 @@ Example Playbook
     - lae.docker
   vars:
     docker_restart_on_upgrade: no
+    docker_compose_install: yes
 ```
