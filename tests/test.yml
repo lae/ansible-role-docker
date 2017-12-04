@@ -14,6 +14,8 @@
     - name: Test that the Nginx container is functional
       uri:
         url: "http://{{ inventory_hostname }}:8080"
+    - name: Test that docker-compose is functional
+      shell: "docker-compose version"
     - block:
       - name: Docker daemon status (systemd)
         shell: systemctl status docker.service

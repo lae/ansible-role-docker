@@ -2,5 +2,11 @@
 # defaults file for lae.docker
 docker_config:
   live-restore: true
-  log-level: "info"
+  log-level: 'info'
 docker_restart_on_upgrade: yes
+
+docker_compose_install: no
+docker_compose_install_prefix: /usr/local
+docker_compose_version: '1.17.1'
+docker_compose_url: 'https://github.com/docker/compose/releases/download/{{ docker_compose_version }}/docker-compose-Linux-x86_64'
+docker_compose_sha256sum: 'db0a7b79d195dc021461d5628a8d53eeb2e556d2548b764770fccabb0a319dd8'

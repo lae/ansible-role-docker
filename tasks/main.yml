@@ -43,3 +43,42 @@
     name: docker
     state: started
     enabled: yes
+
+- name: Download and install docker-compose
+  get_url:
+    url: "{{ docker_compose_url }}"
+    dest: "{{ docker_compose_install_prefix }}/bin/docker-compose"
+    mode: 0755
+    sha256sum: "{{ docker_compose_sha256sum }}"
+  when: >-
+    docker_compose_install and
+    (
+      "docker" not in ansible_local or
+      "compose" not in ansible_local.docker or
+      (
+        "version" in ansible_local.docker.compose and
+        ansible_local.docker.compose.version != docker_compose_version
+      )
+    )
+
+- name: Remove docker-compose if disabled
+  file:
+    dest: "{{ docker_compose_install_prefix }}/bin/docker-compose"
+    state: absent
+  when: not docker_compose_install
+
+- name: Ensure Ansible facts directory exists
+  file:
+    dest: /etc/ansible/facts.d
+    state: directory
+
+- name: Install Docker facts
+  template:
+    src: facts.j2
+    dest: /etc/ansible/facts.d/docker.fact
+  register: __docker_facts
+
+- name: Ensure updated Docker facts are loaded
+  setup:
+    filter: ansible_local
+  when: __docker_facts | changed
