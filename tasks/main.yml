@@ -67,6 +67,12 @@
     state: absent
   when: not docker_compose_install
 
+- name: Install Docker Python library
+  pip:
+    name: docker
+    version: "{{ docker_python_version }}"
+  when: docker_python_install
+
 - name: Ensure Ansible facts directory exists
   file:
     dest: /etc/ansible/facts.d

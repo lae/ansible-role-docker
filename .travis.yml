@@ -27,7 +27,7 @@ install:
 - pip install ansible
 - ansible --version
 - printf '[defaults]\nroles_path=../\ncallback_whitelist=profile_tasks' >ansible.cfg
-- ansible-galaxy install lae.travis-lxc
+- ansible-galaxy install lae.travis-lxc azavea.pip
 - ansible-playbook -vvv tests/install.yml -i tests/inventory
 script:
 - ansible-playbook tests/deploy.yml -i tests/inventory --syntax-check
