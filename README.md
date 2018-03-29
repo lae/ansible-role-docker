@@ -9,7 +9,7 @@ Installs/upgrades and configures Docker Community Edition.
 Notes
 -----
 
-This role should also work on Fedora 25, but Fedora is currently not tested.
+This role should also work on Fedora, but Fedora tests are not passing on LXC.
 Debian 8/9, Ubuntu 16 and CentOS 7 are.
 
 Role Variables
