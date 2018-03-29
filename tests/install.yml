@@ -3,6 +3,8 @@
   connection: local
   roles:
     - { name: lae.travis-lxc }
+  vars:
+    quantity: 2
 
 - hosts: all
   roles:

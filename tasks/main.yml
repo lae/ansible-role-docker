@@ -44,14 +44,14 @@
     state: started
     enabled: yes
 
+- name: Install Docker Python library
+  pip:
+    name: docker
+    version: "{{ docker_python_version }}"
+    state: "{{ 'present' if (docker_compose_install or docker_python_install) else 'absent' }}"
+
 - name: Install docker-compose via PyPI
   pip:
     name: docker-compose
     version: "{{ docker_compose_version }}"
     state: "{{ 'present' if docker_compose_install else 'absent' }}"
-
-- name: Install Docker Python library
-  pip:
-    name: docker
-    version: "{{ docker_python_version }}"
-  when: docker_python_install
