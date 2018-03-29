@@ -4,16 +4,29 @@
     - name: Pull an Alpine-based Nginx image
       docker_image:
         name: nginx:alpine
-    - name: Create an Nginx container
+    - name: Create an Nginx container using Docker directly
       docker_container:
         image: nginx:alpine
         name: docker_test
         state: started
         ports:
           - "8080:80"
-    - name: Test that the Nginx container is functional
+    - name: Test that the plain Nginx container is functional
       uri:
         url: "http://{{ inventory_hostname }}:8080"
+    - name: Create an Nginx container using compose
+      docker_service:
+        project_name: nginx_test
+        definition:
+          version: '2'
+          services:
+            web:
+              image: nginx:alpine
+              ports:
+                - "8081:80"
+    - name: Test that the docker-compose Nginx container is functional
+      uri:
+        url: "http://{{ inventory_hostname }}:8081"
     - name: Test that docker-compose is functional
       shell: "docker-compose version"
     - block:
