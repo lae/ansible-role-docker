@@ -8,6 +8,7 @@
 - command: "python -c 'import pip'"
   register: __docker_pip_import
   ignore_errors: yes
+  changed_when: False
 
 - set_fact:
     __docker_pip_exists: '{{ True if (__docker_pip_import.rc == 0) else False }}'
