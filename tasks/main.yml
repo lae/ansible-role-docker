@@ -49,9 +49,11 @@
     name: docker
     version: "{{ docker_python_version }}"
     state: "{{ 'present' if (docker_compose_install or docker_python_install) else 'absent' }}"
+  when: __docker_pip_exists
 
 - name: Install docker-compose via PyPI
   pip:
     name: docker-compose
     version: "{{ docker_compose_version }}"
     state: "{{ 'present' if docker_compose_install else 'absent' }}"
+  when: __docker_pip_exists

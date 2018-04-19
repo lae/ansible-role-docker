@@ -1,5 +1,5 @@
 ---
-- hosts: docker
+- hosts: docker_python
   tasks:
     - name: Pull an Alpine-based Nginx image
       docker_image:
@@ -27,11 +27,14 @@
     - name: Test that docker-compose is functional
       shell: "docker-compose version"
 
-- hosts: docker,docker_compose
+- hosts: docker_python:docker_compose
   tasks:
     - name: Test that the Nginx container is functional
       uri:
         url: "http://{{ inventory_hostname }}:8080"
+
+- hosts: docker
+  tasks:
     - block:
       - name: Docker daemon status (systemd)
         shell: systemctl status docker.service
