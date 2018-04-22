@@ -1,5 +1,8 @@
 [docker]
-test01.lxc
+test[01:03].lxc
+
+[docker_python]
+test02.lxc
 
 [docker_compose]
-test02.lxc
+test03.lxc

@@ -4,11 +4,9 @@
   roles:
     - { name: lae.travis-lxc }
   vars:
-    host_quantity: 2
+    host_quantity: 3
 
 - hosts: all
-  roles:
-    - { name: azavea.pip }
   tasks:
     - name: Make cgroups modifiable
       mount:
@@ -40,3 +38,7 @@
         - cpuacct
         - net_cls
         - net_prio
+
+- hosts: docker_python:docker_compose
+  roles:
+    - { name: azavea.pip }
