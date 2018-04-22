@@ -5,39 +5,36 @@ dist: trusty
 cache:
   directories: [ '$HOME/lxc' ]
   pip: true
-env:
-# The following default to Debian Stretch
-- ANSIBLE_VERSION='git+https://github.com/ansible/ansible.git@devel' # 2.6 DEVEL
-- ANSIBLE_VERSION='ansible>=2.5.0,<2.6.0,!=2.5.1' # 2.5.x
-- ANSIBLE_VERSION='ansible>=2.4.0,<2.5.0' # 2.4.x
-- ANSIBLE_VERSION='ansible>=2.3.0,<2.4.0' # 2.3.x
-- LXC_DISTRO=debian LXC_RELEASE=jessie ANSIBLE_VERSION='ansible!=2.5.1'
-- LXC_DISTRO=ubuntu LXC_RELEASE=xenial ANSIBLE_VERSION='ansible!=2.5.1'
-- LXC_DISTRO=centos LXC_RELEASE=7 ANSIBLE_VERSION='ansible!=2.5.1'
 matrix:
   fast_finish: true
-before_cache:
-- 'sudo mkdir $HOME/lxc && sudo tar cf $HOME/lxc/cache.tar /var/cache/lxc/ &&
-  sudo chown $USER: $HOME/lxc/cache.tar'
+env:
+- ANSIBLE_GIT_VERSION='devel' # 2.6.x development branch
+- ANSIBLE_VERSION='<2.6.0' # 2.5.x
+- ANSIBLE_VERSION='<2.5.0' # 2.4.x
+- ANSIBLE_VERSION='<2.4.0' # 2.3.x
 install:
-- sudo tar xf $HOME/lxc/cache.tar -C / || true
-- sudo apt-get install -y expect-dev
-- if [ "$ANSIBLE_VERSION" ]; then pip install $ANSIBLE_VERSION; else pip install ansible; fi
+- if [ "$ANSIBLE_GIT_VERSION" ]; then pip install "https://github.com/ansible/ansible/archive/${ANSIBLE_GIT_VERSION}.tar.gz";
+  elif [ "$ANSIBLE_VERSION" ]; then pip install "ansible${ANSIBLE_VERSION}";
+  else pip install ansible; fi
 - ansible --version
-- printf '[defaults]\nroles_path=../\ncallback_whitelist=profile_tasks' >ansible.cfg
+# The following is needed for default Ansible 2.3 installations
+- 'sudo mkdir -p /etc/ansible/roles && sudo chown $(whoami): /etc/ansible/roles'
 - ansible-galaxy install lae.travis-lxc azavea.pip
-- ansible-playbook -vvv tests/install.yml -i tests/inventory
+- ansible-playbook tests/install.yml -i tests/inventory
+- git archive --format tar.gz HEAD > lae.docker.tar.gz && ansible-galaxy install
+  lae.docker.tar.gz,$(git rev-parse HEAD),lae.docker && rm lae.docker.tar.gz
+before_script: cd tests/
 script:
-- ansible-playbook tests/deploy.yml -i tests/inventory --syntax-check
-- ansible-playbook tests/deploy.yml -i tests/inventory
-- 'ANSIBLE_STDOUT_CALLBACK=debug unbuffer ansible-playbook -vv tests/deploy.yml
-  -i tests/inventory >/tmp/idempotency.log 2>&1 ||
-  (e=$?; cat /tmp/idempotency.log; exit $e)'
-- 'grep -A1 "PLAY RECAP" /tmp/idempotency.log | grep -qP "changed=0.*failed=0" &&
-  (echo "Idempotence: PASS"; exit 0) ||
-  (echo "Idempotence: FAIL"; cat /tmp/idempotency.log; exit 1)'
-- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -v tests/test.yml -i tests/inventory
+- ansible-playbook -i inventory deploy.yml --syntax-check
+- ansible-playbook -i inventory deploy.yml
+- 'ANSIBLE_STDOUT_CALLBACK=debug unbuffer ansible-playbook -i inventory -vv
+  deploy.yml > idempotency.log 2>&1 || (e=$?; cat idempotency.log; exit $e)'
+- 'grep -A1 "PLAY RECAP" idempotency.log | grep -qP "changed=0 .*failed=0 .*" &&
+  (echo "Idempotence: PASS"; exit 0) || (echo "Idempotence: FAIL"; exit 1)'
+- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory -v test.yml
 notifications:
   webhooks: https://galaxy.ansible.com/api/v1/notifications/
-  slack:
-    secure: W2c6+HnytML6zmXYQamBhE0FuZ7HlvXxSrr5X+96/0wD5NQCnjXSWrckNKYMpEwd869BCrVPwXl0bWgm6NSZ0SyocYn66X6K8Hddj6RPJVfQaYSw9iVhvW9VpOl7IrLmSYoJ3YVqORzHac2pbQTCThPUj2mBAhPZPcGHSf8NQDH3NRsj/dIXywlLDF4oIEDwCwvOlrSgUXykXH/QTs67HgyQGSln0Sq6Xu1zxNdQyJAQcc8nhnSnPSmUfoxS8sb46ljE5gUwTR0u1ooPPxr8idoLo7doUdfjNmNxNkGhDCxct4GNlxlj+BCtqrVhG8/7xUm9NfuFTTWTtNG6j1lncHK3Tth3Vn6FqFP7yd57CBa4Nh4Er5PPBAtYEyuAMWbOTrOwSeWx0Ogxctp8Usvc6/qnSZiEjxExyNNuQ793LBllZ9JJ8AQcSdnam8m62Ddz1kIq1q/THPEPzsQxz9v4A3wcmBwU7LitFob/Xv9iyAKR7/Em/bCh8Agzkp6wcbnaXlVNLlCxYtpt5RTV+o/+7vG8umU+Ieix6wqFG641HpzaZSm+7CgiCwnxcwG7akBpzfPvm0GFxqvGw4Zz0L562wi7KFllSieCSbQjuXMGNGA35vs8EwUDLw6ZBhQ3WcSstxrxNjDB3bNAQ4dPaekFy/UHc8ve49DGG4eF/s4Cw7Y=
+  irc:
+    on_success: change
+    channels:
+      secure: "gSWYjm5LvtKaXZ3xWBZ8dWxsTcO8Di9tlN2sKTuHrrDaASai3yt6sayvShlm3/VrBaVYmnipq2TO7vxUqA9TJDtJCEeBLCkyCEjuauAUB+82CA4agsEKkdUDViiSjNvAvWB4hKICLb2Nm6yk0i9hTU68fbXGVUrRd9GwScqqTyk1UQaM10BBKvUR7rutSREv8yLouNd03OsT+nsOkw3nhNoaAYDeUAGj0GwgZhCvRLQvwhDm4b5CDI3aBiE33SC11nejUm+2ax2xEqp14r6h40AKpOEAqeSWfmNZd9snldSETxBoqMZKlTvGkhf+/wSfZSbca12OXRb9IqsqqJ/lb7nb5DPxV8EUt1vfo58/wi083FziA0knmUaGLAt+yHuyfAvVGxf0gQnaH5WI2hIo988/138yMqxt73HNU30jU8WnbHZ1FHJEiuPp1jCaPmlmbuIkDe9a2wYG6TWE0NsFb1UG61PWF9T2hmEHz77DqTE7Er2j3csgkpC0pR8sSoK3Vl4O4CwCPdu5jfNcEqgO/2GdF8w3qptXNhqE9TDlPg03kUh8ENc9KctZfE2nR+f4KNdIEtuMuKZOoAtxSWjCUf4/TltNWtbiHqC6ZvpE6FY/YiWfiwgz/l/uYFKhDKbAh9IJBcEe8sXBu8J8apogp2wpRQAxBsGWl0v0IFGUfyc="
