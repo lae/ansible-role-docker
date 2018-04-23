@@ -1,8 +1,21 @@
 [docker]
-test[01:03].lxc
+debian-stretch-standard
+debian-jessie-standard
+ubuntu-xenial-standard
+centos-7-standard
+
+[docker:children]
+docker_python
+docker_compose
 
 [docker_python]
-test02.lxc
+debian-stretch-python
+debian-jessie-python
+ubuntu-xenial-python
+centos-7-python
 
 [docker_compose]
-test03.lxc
+debian-stretch-compose
+debian-jessie-compose
+ubuntu-xenial-compose
+centos-7-compose

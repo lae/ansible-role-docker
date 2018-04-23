@@ -2,9 +2,18 @@
 - hosts: localhost
   connection: local
   roles:
-    - { name: lae.travis-lxc }
+    - lae.travis-lxc
   vars:
-    host_quantity: 3
+    test_profiles:
+      - profile: debian-stretch
+      - profile: debian-jessie
+      - profile: ubuntu-xenial
+      - profile: centos-7
+    test_host_suffixes:
+      - standard
+      - python
+      - compose
+    lxc_use_overlayfs: no
 
 - hosts: all
   tasks:
@@ -41,4 +50,4 @@
 
 - hosts: docker_python:docker_compose
   roles:
-    - { name: azavea.pip }
+    - azavea.pip

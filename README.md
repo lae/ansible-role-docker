@@ -57,3 +57,11 @@ Example Playbook
     docker_restart_on_upgrade: no
     docker_compose_install: yes
 ```
+
+Testing
+-------
+
+If you are attempting to use this role in Travis CI's environment in conjunction
+with LXC containers, please note you will need to mount the correct cgroups as
+Ubuntu 14.04 does not have the correct mappings for its LXC templates. Please
+refer to the [`install.yml`](`tests/install.yml`) in this repo.
