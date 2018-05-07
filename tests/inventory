@@ -1,6 +1,7 @@
 [docker]
 debian-stretch-standard
 debian-jessie-standard
+ubuntu-bionic-standard
 ubuntu-xenial-standard
 centos-7-standard
 
@@ -11,11 +12,13 @@ docker_compose
 [docker_python]
 debian-stretch-python
 debian-jessie-python
+ubuntu-bionic-python
 ubuntu-xenial-python
 centos-7-python
 
 [docker_compose]
 debian-stretch-compose
 debian-jessie-compose
+ubuntu-bionic-compose
 ubuntu-xenial-compose
 centos-7-compose
