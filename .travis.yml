@@ -19,7 +19,7 @@ install:
 - ansible --version
 # The following is needed for default Ansible 2.3 installations
 - 'sudo mkdir -p /etc/ansible/roles && sudo chown $(whoami): /etc/ansible/roles'
-- ansible-galaxy install lae.travis-lxc azavea.pip
+- ansible-galaxy install lae.travis-lxc lae.pip
 - ansible-playbook tests/install.yml -i tests/inventory
 - git archive --format tar.gz HEAD > lae.docker.tar.gz && ansible-galaxy install
   lae.docker.tar.gz,$(git rev-parse HEAD),lae.docker && rm lae.docker.tar.gz

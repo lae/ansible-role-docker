@@ -50,4 +50,4 @@
 
 - hosts: docker_python:docker_compose
   roles:
-    - azavea.pip
+    - lae.pip

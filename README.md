@@ -42,7 +42,7 @@ library. To only install the `docker` library, set `docker_python_install` to
 `True` or `yes`. You will likely need to ensure a recent version of `pip` is
 installed, as the `docker` library depends on a version of `requests` that is
 incompatible with the `pip` package in most distributions. For testing, this
-role uses [azavea.pip](https://galaxy.ansible.com/azavea/pip/).
+role uses [lae.pip](https://galaxy.ansible.com/lae/pip/).
 
 Example Playbook
 ----------------
@@ -51,7 +51,7 @@ Example Playbook
 - hosts: all
   become: True
   roles:
-    - azavea.pip
+    - lae.pip
     - lae.docker
   vars:
     docker_restart_on_upgrade: no
