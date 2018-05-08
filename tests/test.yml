@@ -10,7 +10,6 @@
         when: "ansible_service_mgr == 'systemd'"
       - name: Other Docker daemon logs
         shell: "cat /var/log/daemon.log || grep docker /var/log/messages || true"
-      ignore_errors: yes
 
 - hosts: docker_python
   tasks:
@@ -24,6 +23,9 @@
         state: started
         ports:
           - "8080:80"
+    - name: Test that the Nginx container is functional
+      uri:
+        url: "http://{{ inventory_hostname }}:8080"
 
 - hosts: docker_compose
   tasks:
@@ -37,11 +39,17 @@
               image: nginx:alpine
               ports:
                 - "8080:80"
-    - name: Test that docker-compose is functional
-      shell: "docker-compose version"
-
-- hosts: docker_python:docker_compose
-  tasks:
     - name: Test that the Nginx container is functional
       uri:
         url: "http://{{ inventory_hostname }}:8080"
+    - name: Test that docker-compose is functional
+      shell: "docker-compose version"
+
+- hosts: docker
+  tasks:
+    - name: Stop and destroy test hosts
+      lxc_container:
+        name: "{{ inventory_hostname }}"
+        state: absent
+      delegate_to: localhost
+      become: True
