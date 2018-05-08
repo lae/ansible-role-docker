@@ -1,13 +1,14 @@
-[docker]
+[docker:children]
+docker_standard
+docker_python
+docker_compose
+
+[docker_standard]
 debian-stretch-standard
 debian-jessie-standard
 ubuntu-bionic-standard
 ubuntu-xenial-standard
 centos-7-standard
-
-[docker:children]
-docker_python
-docker_compose
 
 [docker_python]
 debian-stretch-python
