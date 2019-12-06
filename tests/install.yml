@@ -6,10 +6,6 @@
   vars:
     test_profiles:
       - profile: debian-buster
-      - profile: debian-stretch
-      - profile: ubuntu-bionic
-      - profile: ubuntu-xenial
-      - profile: centos-7
     test_host_suffixes:
       - standard
       - python

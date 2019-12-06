@@ -5,21 +5,9 @@ docker_compose
 
 [docker_standard]
 debian-buster-standard
-debian-stretch-standard
-ubuntu-bionic-standard
-ubuntu-xenial-standard
-centos-7-standard
 
 [docker_python]
 debian-buster-python
-debian-stretch-python
-ubuntu-bionic-python
-ubuntu-xenial-python
-centos-7-python
 
 [docker_compose]
 debian-buster-compose
-debian-stretch-compose
-ubuntu-bionic-compose
-ubuntu-xenial-compose
-centos-7-compose
