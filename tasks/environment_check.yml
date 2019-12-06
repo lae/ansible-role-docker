@@ -1,16 +1,19 @@
 ---
 # Tasks to ensure that prerequisites for the role have been satisfied
-- assert:
+- name: Check system architecture
+  assert:
     that:
       - "ansible_architecture == 'x86_64'"
     msg: "Docker CE is only supported on 64-bit systems. Install a 64-bit OS in order to use this role."
 
-- command: "python -c 'import pip'"
+- name: Attempt to load pip
+  command: "python -c 'import pip'"
   register: __docker_pip_import
   ignore_errors: yes
   changed_when: False
 
-- set_fact:
+- name: Identify if pip is installed
+  set_fact:
     __docker_pip_exists: '{{ True if (__docker_pip_import.rc == 0) else False }}'
 
 - name: Ensure pip is available if we are installing docker-py or compose
@@ -19,5 +22,3 @@
   when:
     - not __docker_pip_exists
     - (docker_compose_install or docker_python_install)
-
-# vim:ft=ansible

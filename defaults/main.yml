@@ -4,6 +4,7 @@ docker_config:
   live-restore: true
   log-level: 'info'
 docker_restart_on_upgrade: yes
+docker_upgrade: no
 
 docker_compose_install: no
 docker_compose_version: '1.20.*'

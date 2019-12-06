@@ -18,14 +18,6 @@
 
 - hosts: all
   tasks:
-    - name: Make cgroups modifiable
-      mount:
-        name: /sys/fs/cgroup
-        fstype: sysfs
-        src: sysfs
-        opts: rw
-        state: mounted
-
     - name: Create missing cgroup directories
       file:
         path: "/sys/fs/cgroup/{{ item }}"

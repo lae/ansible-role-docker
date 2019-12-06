@@ -20,7 +20,7 @@
 - name: Install Docker CE
   package:
     name: docker-ce
-    state: latest
+    state: "{{ 'latest' if docker_upgrade else 'present' }}"
   notify:
     - restart docker
 

@@ -10,7 +10,7 @@ Notes
 -----
 
 This role should also work on Fedora, but Fedora tests are not passing on LXC.
-Debian 8/9, Ubuntu 16 and CentOS 7 are.
+Debian 8/9/10, Ubuntu 16/18 and CentOS 7 are.
 
 Role Variables
 --------------
@@ -35,6 +35,9 @@ will turn into the following `/etc/docker/daemon.json`:
 
 `docker_restart_on_upgrade` will restart the docker service if this role
 upgrades the `docker-ce` package.
+
+Toggle `docker_upgrade` to `True` or `yes` to run Docker package upgrades on
+subsequent runs of this role.
 
 To install `docker-compose`, set `docker_compose_install` to `True` or `yes`.
 This will install `docker-compose` via PyPI, as well as pull the `docker` Python
