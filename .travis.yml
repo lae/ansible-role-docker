@@ -9,50 +9,43 @@ cache:
   directories: [ '$HOME/lxc' ]
   pip: true
 env:
-- ANSIBLE_GIT_VERSION='devel' # 2.6.x development branch
-- ANSIBLE_VERSION='<2.6.0' # 2.5.x
+- ANSIBLE_GIT_VERSION='devel' # 2.10.x development branch
+- ANSIBLE_VERSION='<2.10.0' # 2.9.x
+- ANSIBLE_VERSION='<2.9.0' # 2.8.x
 matrix:
   fast_finish: true
-  include:
-    - python: '2.7'
-      env: ANSIBLE_VERSION='<2.5.0' # 2.4.x
-    - python: '2.7'
-      env: ANSIBLE_VERSION='<2.4.0' # 2.3.x
 install:
 - if [ "$ANSIBLE_GIT_VERSION" ]; then pip install "https://github.com/ansible/ansible/archive/${ANSIBLE_GIT_VERSION}.tar.gz";
-  elif [ "$ANSIBLE_VERSION" ]; then pip install "ansible${ANSIBLE_VERSION}";
-  else pip install ansible; fi
+  else pip install "ansible${ANSIBLE_VERSION}"; fi;
+  pip install --pre ansible-lint
 - ansible --version
-# The following is needed for default Ansible 2.3 installations
-- 'sudo mkdir -p /etc/ansible/roles && sudo chown $(whoami): /etc/ansible/roles'
 - ansible-galaxy install lae.travis-lxc lae.pip
 - ansible-playbook tests/install.yml -i tests/inventory
 - git archive --format tar.gz HEAD > lae.docker.tar.gz && ansible-galaxy install
   lae.docker.tar.gz,$(git rev-parse HEAD),lae.docker && rm lae.docker.tar.gz
 before_script: cd tests/
 script:
+- ansible-lint ../ || true
 - ansible-playbook -i inventory deploy.yml --syntax-check
-- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory deploy.yml --limit docker_standard
-- 'ANSIBLE_STDOUT_CALLBACK=debug unbuffer ansible-playbook -vvi inventory --limit docker_standard
-  deploy.yml > play.log || (e=$?; cat play.log; exit $e); printf "Idempotence: ";
+- ansible-playbook -i inventory deploy.yml --limit docker_standard
+- 'ANSIBLE_STDOUT_CALLBACK=debug ANSIBLE_DISPLAY_SKIPPED_HOSTS=no ANSIBLE_DISPLAY_OK_HOSTS=no
+  unbuffer ansible-playbook -vvi inventory deploy.yml --limit_docker_standard &>play.log; printf "Idempotence: ";
   grep -A1 "PLAY RECAP" play.log | grep -qP "changed=0 .*failed=0 .*"
   && (echo "PASS"; exit 0) || (echo "FAIL"; cat play.log; exit 1)'
 - ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory -v test.yml --limit docker_standard
-- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory deploy.yml --limit docker_python
-- 'ANSIBLE_STDOUT_CALLBACK=debug unbuffer ansible-playbook -vvi inventory --limit docker_python
-  deploy.yml > play.log || (e=$?; cat play.log; exit $e); printf "Idempotence: ";
+- ansible-playbook -i inventory deploy.yml --limit docker_python
+- 'ANSIBLE_STDOUT_CALLBACK=debug ANSIBLE_DISPLAY_SKIPPED_HOSTS=no ANSIBLE_DISPLAY_OK_HOSTS=no
+  unbuffer ansible-playbook -vvi inventory deploy.yml --limit docker_python &>play.log; printf "Idempotence: ";
   grep -A1 "PLAY RECAP" play.log | grep -qP "changed=0 .*failed=0 .*"
   && (echo "PASS"; exit 0) || (echo "FAIL"; cat play.log; exit 1)'
 - ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory -v test.yml --limit docker_python
-- ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory deploy.yml --limit docker_compose
-- 'ANSIBLE_STDOUT_CALLBACK=debug unbuffer ansible-playbook -vvi inventory --limit docker_compose
-  deploy.yml > play.log || (e=$?; cat play.log; exit $e); printf "Idempotence: ";
+- ansible-playbook -i inventory deploy.yml --limit docker_compose
+- 'ANSIBLE_STDOUT_CALLBACK=debug ANSIBLE_DISPLAY_SKIPPED_HOSTS=no ANSIBLE_DISPLAY_OK_HOSTS=no
+  unbuffer ansible-playbook -vvi inventory deploy.yml --limit docker_compose &>play.log; printf "Idempotence: ";
   grep -A1 "PLAY RECAP" play.log | grep -qP "changed=0 .*failed=0 .*"
   && (echo "PASS"; exit 0) || (echo "FAIL"; cat play.log; exit 1)'
 - ANSIBLE_STDOUT_CALLBACK=debug ansible-playbook -i inventory -v test.yml --limit docker_compose
 notifications:
-  webhooks: https://galaxy.ansible.com/api/v1/notifications/
-  irc:
-    on_success: change
-    channels:
-      secure: "gSWYjm5LvtKaXZ3xWBZ8dWxsTcO8Di9tlN2sKTuHrrDaASai3yt6sayvShlm3/VrBaVYmnipq2TO7vxUqA9TJDtJCEeBLCkyCEjuauAUB+82CA4agsEKkdUDViiSjNvAvWB4hKICLb2Nm6yk0i9hTU68fbXGVUrRd9GwScqqTyk1UQaM10BBKvUR7rutSREv8yLouNd03OsT+nsOkw3nhNoaAYDeUAGj0GwgZhCvRLQvwhDm4b5CDI3aBiE33SC11nejUm+2ax2xEqp14r6h40AKpOEAqeSWfmNZd9snldSETxBoqMZKlTvGkhf+/wSfZSbca12OXRb9IqsqqJ/lb7nb5DPxV8EUt1vfo58/wi083FziA0knmUaGLAt+yHuyfAvVGxf0gQnaH5WI2hIo988/138yMqxt73HNU30jU8WnbHZ1FHJEiuPp1jCaPmlmbuIkDe9a2wYG6TWE0NsFb1UG61PWF9T2hmEHz77DqTE7Er2j3csgkpC0pR8sSoK3Vl4O4CwCPdu5jfNcEqgO/2GdF8w3qptXNhqE9TDlPg03kUh8ENc9KctZfE2nR+f4KNdIEtuMuKZOoAtxSWjCUf4/TltNWtbiHqC6ZvpE6FY/YiWfiwgz/l/uYFKhDKbAh9IJBcEe8sXBu8J8apogp2wpRQAxBsGWl0v0IFGUfyc="
+  webhooks:
+      - https://galaxy.ansible.com/api/v1/notifications/
+      - https://t2d.idolactiviti.es/notify

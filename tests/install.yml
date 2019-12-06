@@ -5,8 +5,8 @@
     - lae.travis-lxc
   vars:
     test_profiles:
+      - profile: debian-buster
       - profile: debian-stretch
-      - profile: debian-jessie
       - profile: ubuntu-bionic
       - profile: ubuntu-xenial
       - profile: centos-7
